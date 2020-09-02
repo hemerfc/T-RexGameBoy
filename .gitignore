@@ -1,0 +1,6 @@
+*.sym
+*.desktop
+*.2bpp
+build
+.vscode
+.Makefile.swp
