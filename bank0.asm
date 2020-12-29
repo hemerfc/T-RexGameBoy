@@ -60,10 +60,6 @@ START:
   ;ld  bc,SPLASH_MAP_SIZE_A
   ;call LOAD_MAP
 
-  ; load graphics
-  ld hl, gfx_start
-  ld bc, gfx_end - gfx_start
-  call LOAD_TILES
 
   ;init music
   ;call INIT_MUSIC
@@ -120,6 +116,8 @@ GAME_LOOP:
 
   call DINO_DRAW
   
+  call CAM_SCROLL
+
   ;check gameover
   ld  a,[game_over]
   cp  0
@@ -171,21 +169,32 @@ GAME_LOAD:
   ldh [rOBP0],a
   ldh [rOBP1],a
 
-  ;load game tiles
-  ;call CLEAR_MAP
-  ;ld  hl,GAME_TILE_DATA
-  ;ld  bc,GAME_TILE_COUNT
-  ;call LOAD_TILES
+  call CLEAR_MAP
 
-  ;load game map
+  ;load game tiles
+  ld hl, gfx_start
+  ld bc, gfx_end - gfx_start
+  call LOAD_TILES
+
+  call WAIT_VBLANK
+  ;set start game map
+  ld hl, $9800 + ( $20 * $0B); Print it at the top left.
+  ld b, $20
+.setStartMap
+  ld a, $80;[de]
+  ld [hli], a
+  dec b; Check if the b is 0.
+  jr nz, .setStartMap
+  
   ;ld  hl,GAME_MAP_DATA
   ;ld  bc,GAME_MAP_SIZE
+  ;ld hl, gfx_start
+  ;ld bc, gfx_end - gfx_start
   ;call LOAD_MAP
 
   ;reset scroll
   xor a
   ld  [rSCX],a
-  ld  a,150
   ld  [rSCY],a
 
   ; reset state
@@ -197,7 +206,7 @@ GAME_LOAD:
   ld [player_jump_speed], a
 
   ;init the player
-  ld a, 80
+  ld a, 85
   ld [player_y],a 
   
   ld a, 32
@@ -210,6 +219,13 @@ GAME_LOAD:
 
   ret
 
+
+CAM_SCROLL:
+  ; scroll x viewport with constant speed
+  ld  a, [rSCX]
+  add a,1
+  ld  [rSCX],a
+  ret
 
 ;-------------
 ; Music shiz

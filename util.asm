@@ -7,6 +7,7 @@ Player_MusicStart  equ $4003
 Player_MusicStop   equ $4006
 Player_SongSelect  equ $400c
 Player_MusicUpdate equ $4100
+Player_JumpLimit   equ 85
 SongTick           equ $c7cc
 MusicBank          equ 1
 SplashSong         equ 0

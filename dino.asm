@@ -13,7 +13,7 @@ DINO_UPDATE:
 .end_joy_up_pressed
 
   ;check down press
-  ld a, [joypad_pressed]
+  ld a, [joypad_pressed] 
   call JOY_DOWN
   jr  nz,.end_joy_down_pressed
 
@@ -72,21 +72,21 @@ DINO_UPDATE:
   sub b
   ld [player_y],a
 
-  ; if player_y > 79
-  cp 79
+  ; if player_y > 85 Player_JumpLimit
+  cp Player_JumpLimit
   jr c,.dino_state_end
   ; end the jump
   ld a, %00000000
   ld [player_state], a
   ; assign y pos
-  ld a, 80
+  ld a, Player_JumpLimit
   ld [player_y], a
   ; set jump speed
   ld a, 0
   ld [player_jump_speed], a
   
 .dino_state_end
-
+                     
 ret ; PLAYER_UPDATE
 
 DINO_DRAW:
@@ -103,12 +103,12 @@ DINO_DRAW:
   add 8
   ld  [player_y3],a
 
-  call DINO_DRAW_STAND
+  call DINO_DRAW_WALK2
 
 ;-------------
 ; draw dino sprites
 ;-------------
-DINO_DRAW_STAND:
+DINO_DRAW_WALK0:
   UPDATE_OAM_SPRITE 0,  [player_y], [player_x2],  4, %00000000
   UPDATE_OAM_SPRITE 1,  [player_y], [player_x3],  5, %00000000
   UPDATE_OAM_SPRITE 2, [player_y2],  [player_x],  6, %00000000
@@ -117,4 +117,26 @@ DINO_DRAW_STAND:
   UPDATE_OAM_SPRITE 5, [player_y3],  [player_x],  9, %00000000
   UPDATE_OAM_SPRITE 6, [player_y3], [player_x2], 10, %00000000
   
-  ret ; DRAW_DINO_STAND
+  ret ; DINO_DRAW_WALK0
+
+DINO_DRAW_WALK1:
+  UPDATE_OAM_SPRITE 0,  [player_y], [player_x2],  4, %00000000
+  UPDATE_OAM_SPRITE 1,  [player_y], [player_x3],  5, %00000000
+  UPDATE_OAM_SPRITE 2, [player_y2],  [player_x],  6, %00000000
+  UPDATE_OAM_SPRITE 3, [player_y2], [player_x2],  7, %00000000
+  UPDATE_OAM_SPRITE 4, [player_y2], [player_x3],  8, %00000000
+  UPDATE_OAM_SPRITE 5, [player_y3],  [player_x], 12, %00000000
+  UPDATE_OAM_SPRITE 6, [player_y3], [player_x2], 13, %00000000
+  
+  ret ; DINO_DRAW_WALK1
+
+DINO_DRAW_WALK2:
+  ;UPDATE_OAM_SPRITE 0,  [player_y], [player_x2],  4, %00000000
+  UPDATE_OAM_SPRITE 1,  [player_y], [player_x3],  5, %00000000
+  UPDATE_OAM_SPRITE 2, [player_y2],  [player_x],  6, %00000000
+  UPDATE_OAM_SPRITE 3, [player_y2], [player_x2],  7, %00000000
+  UPDATE_OAM_SPRITE 4, [player_y2], [player_x3],  8, %00000000
+  UPDATE_OAM_SPRITE 5, [player_y3],  [player_x],  9, %00000000
+  UPDATE_OAM_SPRITE 6, [player_y3], [player_x2], 11, %00000000
+  
+  ret ; DINO_DRAW_WALK2
